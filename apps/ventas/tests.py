@@ -34,4 +34,41 @@ class VentasTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, respuesta_esperada)
 
-    
+    def test_balance(self):
+        url = '/api/balance/'
+        data = {
+            "mes": ["Enero", "Febrero", "Marzo", "Abril"],
+            "ventas": [30500, 35600, 28300, 33900],
+            "gastos": [22000, 23400, 18100, 20700]
+        }
+        response = self.client.post(url, data, format='json', **self.headers)
+
+        expected_data = [
+            {
+                "mes": "Enero",
+                "ventas": 30500,
+                "gastos": 22000,
+                "balance": 8500
+            },
+            {
+                "mes": "Febrero",
+                "ventas": 35600,
+                "gastos": 23400,
+                "balance": 12200
+            },
+            {
+                "mes": "Marzo",
+                "ventas": 28300,
+                "gastos": 18100,
+                "balance": 10200
+            },
+            {
+                "mes": "Abril",
+                "ventas": 33900,
+                "gastos": 20700,
+                "balance": 13200
+            }
+        ]
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data, expected_data)
+
