@@ -1,10 +1,14 @@
+from django.contrib.auth.models import User
 from rest_framework.authentication import BasicAuthentication
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.viewsets import ModelViewSet
+from rest_framework import status
+from django.db import transaction
 
-from apps.ventas.api.serializers import ClasificarSerializer, BalanceSerializer
+from apps.ventas.api.serializers import ClasificarSerializer, BalanceSerializer, UsuarioSerializer, PerfilSerializer
 
 @api_view(['POST'])
 @authentication_classes([BasicAuthentication])
@@ -51,3 +55,24 @@ class Balance(APIView):
             }
             resultado.append(item)
         return Response(resultado)
+
+
+class UsuarioViewSet(ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UsuarioSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        with transaction.atomic():
+            try:
+                user = serializer.save()
+                perfil_data = {'usuario': user.id, 'cargo': request.data.get('cargo'), 'zonas': request.data.get('zonas')}
+                perfil_serializer = PerfilSerializer(data=perfil_data)
+                perfil_serializer.is_valid(raise_exception=True)
+                perfil_serializer.save()
+            except Exception as e:
+                transaction.set_rollback(True)
+                raise e
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)

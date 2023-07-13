@@ -1,10 +1,9 @@
 from rest_framework.routers import DefaultRouter
 from django.urls import path
-from apps.ventas.api.views import clasificar, Balance
+from apps.ventas.api.views import clasificar, Balance, UsuarioViewSet
 
 router = DefaultRouter()
-
-# router.register()
+router.register(r'usuarios', UsuarioViewSet)
 
 app_name = "api"
 urlpatterns = [

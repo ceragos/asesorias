@@ -1,6 +1,9 @@
 from rest_framework import serializers
+from django.contrib.auth.models import User
+from django.contrib.auth.password_validation import validate_password
 
-from apps.ventas.models import MESES_CHOICES
+from apps.ventas.enums import MESES_CHOICES
+from apps.ventas.models import Perfil
 
 
 class ClasificarSerializer(serializers.Serializer):
@@ -25,3 +28,35 @@ class BalanceSerializer(serializers.Serializer):
             raise serializers.ValidationError("Las listas 'mes', 'ventas' y 'gastos' deben tener el mismo tamaño.")
         
         return data
+    
+
+class UsuarioSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True)
+    password_confirmation = serializers.CharField(write_only=True)
+
+    def validate(self, data):
+        password = data.get('password')
+        password_confirmation = data.get('password_confirmation')
+        if password != password_confirmation:
+            raise serializers.ValidationError({"password": "Las contraseñas no coinciden."})
+        
+        validate_password(password)
+        return data
+
+    def create(self, validated_data):
+        validated_data.pop('password_confirmation')
+        password = validated_data.pop('password')
+        user = User(**validated_data)
+        user.set_password(password)
+        user.save()
+        return user
+
+    class Meta:
+        model = User
+        fields = ('username', 'password', 'password_confirmation')
+
+
+class PerfilSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Perfil
+        fields = '__all__'
