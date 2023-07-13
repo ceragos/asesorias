@@ -22,7 +22,7 @@ class BalanceSerializer(serializers.Serializer):
         gastos = data.get('gastos', [])
 
         if len(set(mes)) != len(mes):
-            raise serializers.ValidationError({'mes': "El campo no debe contener elementos repetidos."})
+            raise serializers.ValidationError({'mes': 'El campo no debe contener elementos repetidos.'})
         
         if len(mes) != len(ventas) or len(mes) != len(gastos) or len(ventas) != len(gastos):
             raise serializers.ValidationError("Las listas 'mes', 'ventas' y 'gastos' deben tener el mismo tamaño.")
@@ -56,7 +56,7 @@ class UsuarioSerializer(serializers.ModelSerializer):
         password = data.get('password')
         password_confirmation = data.get('password_confirmation')
         if password != password_confirmation:
-            raise serializers.ValidationError({"password": "Las contraseñas no coinciden."})
+            raise serializers.ValidationError({'password': 'Las contraseñas no coinciden.'})
         
         validate_password(password)
         return data
