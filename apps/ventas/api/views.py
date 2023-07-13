@@ -4,7 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.ventas.api.serializers import ClasificarSerializer
+from apps.ventas.api.serializers import ClasificarSerializer, BalanceSerializer
 
 @api_view(['POST'])
 @authentication_classes([BasicAuthentication])
@@ -32,3 +32,22 @@ def clasificar(request):
     
     return Response(response_data)
 
+
+class Balance(APIView):
+    authentication_classes = [BasicAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        serializer = BalanceSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.validated_data
+        resultado = []
+        for mes, ventas, gastos in zip(data['mes'], data['ventas'], data['gastos']):
+            item = {
+                'mes': mes,
+                'ventas': ventas,
+                'gastos': gastos,
+                'balance': ventas - gastos
+            }
+            resultado.append(item)
+        return Response(resultado)
