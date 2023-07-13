@@ -61,6 +61,7 @@ class Balance(APIView):
 class PerfilViewSet(ModelViewSet):
     queryset = Perfil.objects.all()
     serializer_class = PerfilSerializer
+    permission_classes = [IsAuthenticated]
 
     def create(self, request, *args, **kwargs):
         usuario_serializer = UsuarioSerializer(data=request.data)
