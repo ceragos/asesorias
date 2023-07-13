@@ -8,6 +8,7 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework import status
 from django.db import transaction
 
+from apps.ventas.models import Perfil
 from apps.ventas.api.serializers import ClasificarSerializer, BalanceSerializer, UsuarioSerializer, PerfilSerializer
 
 @api_view(['POST'])
@@ -57,22 +58,32 @@ class Balance(APIView):
         return Response(resultado)
 
 
-class UsuarioViewSet(ModelViewSet):
-    queryset = User.objects.all()
-    serializer_class = UsuarioSerializer
+class PerfilViewSet(ModelViewSet):
+    queryset = Perfil.objects.all()
+    serializer_class = PerfilSerializer
 
     def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
+        usuario_serializer = UsuarioSerializer(data=request.data)
+        usuario_serializer.is_valid(raise_exception=True)
+
         with transaction.atomic():
             try:
-                user = serializer.save()
-                perfil_data = {'usuario': user.id, 'cargo': request.data.get('cargo'), 'zonas': request.data.get('zonas')}
-                perfil_serializer = PerfilSerializer(data=perfil_data)
+                perfil_data = request.data.copy()
+                usuario = usuario_serializer.save()
+                perfil_data['usuario'] = usuario.id
+                perfil_serializer = self.get_serializer(data=perfil_data)
                 perfil_serializer.is_valid(raise_exception=True)
                 perfil_serializer.save()
             except Exception as e:
                 transaction.set_rollback(True)
                 raise e
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        headers = self.get_success_headers(perfil_serializer.data)
+        return Response(perfil_serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+    
+    
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        usuario_id = instance.usuario.id
+        self.perform_destroy(instance)
+        User.objects.filter(id=usuario_id).delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

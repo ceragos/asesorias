@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
 
 from apps.ventas.enums import MESES_CHOICES
-from apps.ventas.models import Perfil
+from apps.ventas.models import Perfil, Cargo, Zona
 
 
 class ClasificarSerializer(serializers.Serializer):
@@ -30,9 +30,27 @@ class BalanceSerializer(serializers.Serializer):
         return data
     
 
+class CargoSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Cargo
+        fields = ['nombre']
+
+
+class ZonaSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Zona
+        fields = ['ciudad', 'nombre']
+
+
 class UsuarioSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
     password_confirmation = serializers.CharField(write_only=True)
+
+    class Meta:
+        model = User
+        fields = ('username', 'password', 'password_confirmation')
 
     def validate(self, data):
         password = data.get('password')
@@ -51,12 +69,18 @@ class UsuarioSerializer(serializers.ModelSerializer):
         user.save()
         return user
 
-    class Meta:
-        model = User
-        fields = ('username', 'password', 'password_confirmation')
-
 
 class PerfilSerializer(serializers.ModelSerializer):
+    
     class Meta:
         model = Perfil
         fields = '__all__'
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+
+        representation['usuario'] = UsuarioSerializer(instance.usuario).data
+        representation['cargo'] = CargoSerializer(instance.cargo).data
+        representation['zonas'] = ZonaSerializer(instance.zonas.all(), many=True).data
+
+        return representation
