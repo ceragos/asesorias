@@ -8,8 +8,10 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework import status
 from django.db import transaction
 
-from apps.ventas.models import Perfil
 from apps.ventas.api.serializers import ClasificarSerializer, BalanceSerializer, UsuarioSerializer, PerfilSerializer
+from apps.ventas.interfaces import PerfilInputPort
+from apps.ventas.models import Perfil
+from apps.ventas.use_case import PerfilUseCase
 
 @api_view(['POST'])
 @authentication_classes([BasicAuthentication])
@@ -58,6 +60,13 @@ class Balance(APIView):
         return Response(resultado)
 
 
+class PerfilAdapter(PerfilInputPort):
+    
+    def delete_perfil(self, perfil_id):
+        use_case = PerfilUseCase()
+        use_case.delete_perfil(perfil_id)
+
+
 class PerfilViewSet(ModelViewSet):
     queryset = Perfil.objects.all()
     serializer_class = PerfilSerializer
@@ -84,7 +93,9 @@ class PerfilViewSet(ModelViewSet):
     
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
-        usuario_id = instance.usuario.id
-        self.perform_destroy(instance)
-        User.objects.filter(id=usuario_id).delete()
+        perfil_id = instance.id
+
+        adapter = PerfilAdapter()
+        adapter.delete_perfil(perfil_id)
+
         return Response(status=status.HTTP_204_NO_CONTENT)
