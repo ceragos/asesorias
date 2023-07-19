@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User
-from apps.ventas.models import Perfil
+from apps.ventas.models.perfiles import Perfil
 
 
 class PerfilUseCase:

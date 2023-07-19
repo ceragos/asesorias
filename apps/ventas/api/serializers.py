@@ -2,8 +2,8 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
 
-from apps.ventas.enums import MESES_CHOICES
-from apps.ventas.models import Perfil, Cargo, Zona
+from apps.ventas.enums.meses import MESES_CHOICES
+from apps.ventas.models.perfiles import Perfil, Cargo, Zona
 
 
 class ClasificarSerializer(serializers.Serializer):

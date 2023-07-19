@@ -13,7 +13,7 @@ from apps.ventas.api.serializers import (
     ClasificarSerializer, BalanceSerializer, UsuarioSerializer, PerfilSerializer
 )
 from apps.ventas.interfaces import PerfilInputPort
-from apps.ventas.models import Perfil
+from apps.ventas.models.perfiles import Perfil
 from apps.ventas.use_case import PerfilUseCase
 
 
