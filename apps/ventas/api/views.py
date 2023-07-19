@@ -1,6 +1,7 @@
-from django.contrib.auth.models import User
 from rest_framework.authentication import BasicAuthentication
-from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework.decorators import (
+    api_view, authentication_classes, permission_classes
+)
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -8,10 +9,13 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework import status
 from django.db import transaction
 
-from apps.ventas.api.serializers import ClasificarSerializer, BalanceSerializer, UsuarioSerializer, PerfilSerializer
+from apps.ventas.api.serializers import (
+    ClasificarSerializer, BalanceSerializer, UsuarioSerializer, PerfilSerializer
+)
 from apps.ventas.interfaces import PerfilInputPort
 from apps.ventas.models import Perfil
 from apps.ventas.use_case import PerfilUseCase
+
 
 @api_view(['POST'])
 @authentication_classes([BasicAuthentication])
@@ -31,12 +35,12 @@ def clasificar(request):
             duplicado.append(elemento)
 
     clasificado = sorted(principal) + duplicado
-    
+
     response_data = {
         'sin_clasificar': sin_clasificar,
         'clasificado': clasificado
     }
-    
+
     return Response(response_data)
 
 
@@ -61,7 +65,7 @@ class Balance(APIView):
 
 
 class PerfilAdapter(PerfilInputPort):
-    
+
     def delete_perfil(self, perfil_id):
         use_case = PerfilUseCase()
         use_case.delete_perfil(perfil_id)
@@ -88,9 +92,10 @@ class PerfilViewSet(ModelViewSet):
                 transaction.set_rollback(True)
                 raise e
         headers = self.get_success_headers(perfil_serializer.data)
-        return Response(perfil_serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-    
-    
+        return Response(
+            perfil_serializer.data, status=status.HTTP_201_CREATED, headers=headers
+        )
+
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
         perfil_id = instance.id

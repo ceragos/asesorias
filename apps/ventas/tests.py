@@ -7,6 +7,7 @@ from rest_framework import status, HTTP_HEADER_ENCODING
 from apps.ventas.api.serializers import PerfilSerializer
 from apps.ventas.models import Perfil, Cargo, Zona
 
+
 class VentasTestCase(APITestCase):
 
     def setUp(self):
@@ -14,11 +15,10 @@ class VentasTestCase(APITestCase):
         password = 'hX$9bC1J6Q7X'
 
         User.objects.create_user(username=username, password=password)
-
-        credentials = f'{username}:{password}'.encode(HTTP_HEADER_ENCODING) 
+        credentials = f'{username}:{password}'.encode(HTTP_HEADER_ENCODING)
         self.headers = {
-            'HTTP_AUTHORIZATION': 'Basic ' + 
-            base64.b64encode(credentials).decode(HTTP_HEADER_ENCODING)
+            'HTTP_AUTHORIZATION': 'Basic '
+            + base64.b64encode(credentials).decode(HTTP_HEADER_ENCODING)
         }
 
     def test_clasificar(self):
@@ -74,12 +74,15 @@ class VentasTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, expected_data)
 
+
 class PerfilViewSetTestCase(APITestCase):
 
     def setUp(self):
         self.username = 'usuario_test1'
         self.password = 'hX$9bC1J6Q7X'
-        self.user = User.objects.create_user(username=self.username, password=self.password)
+        self.user = User.objects.create_user(
+            username=self.username, password=self.password
+        )
 
         self.cargo = Cargo.objects.create(nombre='Asesor')
         self.zona1 = Zona.objects.create(ciudad='Cali', nombre='Sur')
@@ -89,7 +92,10 @@ class PerfilViewSetTestCase(APITestCase):
         perfil1 = Perfil.objects.create(usuario=self.user, cargo=self.cargo)
         perfil1.zonas.add(self.zona1)
 
-        perfil2 = Perfil.objects.create(usuario=User.objects.create_user(username='usuario_test2', password='hX$9bC1J6Q7X'), cargo=self.cargo)
+        usuario = User.objects.create_user(
+            username='usuario_test2', password='hX$9bC1J6Q7X'
+        )
+        perfil2 = Perfil.objects.create(usuario=usuario, cargo=self.cargo)
         perfil2.zonas.add(self.zona2)
 
         url = '/api/perfiles/'

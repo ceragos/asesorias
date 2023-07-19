@@ -11,10 +11,11 @@ class ClasificarSerializer(serializers.Serializer):
 
 
 class BalanceSerializer(serializers.Serializer):
-    mes = serializers.ListField(child=serializers.ChoiceField(choices=MESES_CHOICES.choices))
+    mes = serializers.ListField(
+        child=serializers.ChoiceField(choices=MESES_CHOICES.choices)
+    )
     ventas = serializers.ListField(child=serializers.IntegerField())
     gastos = serializers.ListField(child=serializers.IntegerField())
-
 
     def validate(self, data):
         mes = data.get('mes', [])
@@ -22,23 +23,33 @@ class BalanceSerializer(serializers.Serializer):
         gastos = data.get('gastos', [])
 
         if len(set(mes)) != len(mes):
-            raise serializers.ValidationError({'mes': 'El campo no debe contener elementos repetidos.'})
-        
-        if len(mes) != len(ventas) or len(mes) != len(gastos) or len(ventas) != len(gastos):
-            raise serializers.ValidationError("Las listas 'mes', 'ventas' y 'gastos' deben tener el mismo tamaño.")
-        
+            raise serializers.ValidationError(
+                {
+                    'mes': 'El campo no debe contener elementos repetidos.'
+                }
+            )
+
+        if (
+            len(mes) != len(ventas)
+            or len(mes) != len(gastos)
+            or len(ventas) != len(gastos)
+        ):
+            raise serializers.ValidationError(
+                "Las listas 'mes', 'ventas' y 'gastos' deben tener el mismo tamaño."
+            )
+
         return data
-    
+
 
 class CargoSerializer(serializers.ModelSerializer):
-    
+
     class Meta:
         model = Cargo
         fields = ['nombre']
 
 
 class ZonaSerializer(serializers.ModelSerializer):
-    
+
     class Meta:
         model = Zona
         fields = ['ciudad', 'nombre']
@@ -56,8 +67,12 @@ class UsuarioSerializer(serializers.ModelSerializer):
         password = data.get('password')
         password_confirmation = data.get('password_confirmation')
         if password != password_confirmation:
-            raise serializers.ValidationError({'password': 'Las contraseñas no coinciden.'})
-        
+            raise serializers.ValidationError(
+                {
+                    'password': 'Las contraseñas no coinciden.'
+                }
+            )
+
         validate_password(password)
         return data
 
@@ -71,7 +86,7 @@ class UsuarioSerializer(serializers.ModelSerializer):
 
 
 class PerfilSerializer(serializers.ModelSerializer):
-    
+
     class Meta:
         model = Perfil
         fields = '__all__'

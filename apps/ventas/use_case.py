@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from apps.ventas.models import Perfil
 
+
 class PerfilUseCase:
 
     def delete_perfil(self, perfil_id):

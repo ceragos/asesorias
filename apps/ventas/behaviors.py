@@ -5,7 +5,7 @@ class Parametro(models.Model):
     nombre = models.CharField(max_length=80)
 
     class Meta:
-      abstract = True
+        abstract = True
 
     def __str__(self) -> str:
         return self.nombre
