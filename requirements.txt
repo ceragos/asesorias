@@ -1,3 +1,5 @@
 django
 djangorestframework
+django-environ
+psycopg2
 flake8
