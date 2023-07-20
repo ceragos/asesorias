@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="20">
+  <!-- Esquina superior izquierda redondeada: color gris -->
+  <rect x="0" y="0" width="130" height="20" fill="#757575" rx="5" />
+
+  <!-- Esquina inferior izquierda redondeada: color gris -->
+  <rect x="0" y="0" width="130" height="20" fill="#757575" rx="5" />
+
+  <!-- Sección derecha: color verde -->
+  <rect x="120" y="0" width="77" height="20" fill="#4CAF50" rx="0 5 5 0" />
+
+  <!-- Esquina superior derecha redondeada: color verde -->
+  <rect x="197" y="0" width="3" height="20" fill="#4CAF50" rx="5" />
+
+  <!-- Esquina inferior derecha redondeada: color verde -->
+  <rect x="197" y="0" width="3" height="20" fill="#4CAF50" rx="5" />
+
+  <!-- Pequeña porción de fondo gris para separar las secciones -->
+  <rect x="117" y="0" width="6" height="20" fill="#757575" />
+
+  <!-- Texto "Prueba de desarrollo" -->
+  <text x="10" y="14" fill="#fff" font-size="12">Prueba de desarrollo</text>
+
+  <!-- Texto "Backend" -->
+  <text x="125" y="14" fill="#fff" font-size="12">Backend</text>
+</svg>

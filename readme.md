@@ -1,81 +1,67 @@
 # Asesorias
+![Prueba de desarrollador backend](badges/backend.svg)
 
-Desarrollador backend
+Este proyecto consta de tres endpoints de una API diseñada para procesar datos y realizar operaciones relacionadas con una matriz de números, un diccionario de información de ventas y gastos, un esquema de base de datos con usuarios y un sistema de autenticación básica (Basic Auth) para el acceso a los endpoints.
 
-## Requisitos
+### Tecnologías Utilizadas
+El proyecto ha sido desarrollado utilizando las siguientes tecnologías:
 
-Asegúrate de tener instalado lo siguiente en tu entorno de desarrollo:
+- Lenguaje de Programación: Python
+- Framework/API: Django Rest Framework
+- Base de Datos: PosgreSQL
+- Autenticación: Basic Auth
+- Contenerización: Docker
+### 1) Ordenar una Matriz de Números
 
-- Python (versión 3)
+Este endpoint recibe una matriz de números y devuelve la misma matriz ordenada, con la particularidad de que los números duplicados se mueven al final de la lista ordenada.
 
-## Configuración del Entorno
+    POST /api/clasificar/
 
-1. Clona este repositorio en tu máquina local:
+    {
+        "sin_clasificar": [3,5,5,6,8,3,4,4,7,7,1,1,2]
+    }
 
-```
-git clone https://github.com/ceragos/asesorias
-```
+### 2) Información de Ventas y Gastos con Balance
+Este endpoint recibe un diccionario con información sobre ventas y gastos de diferentes meses y devuelve un JSON con la información recibida, incluyendo el balance de cada mes (Ventas - Gastos).
 
-2. Accede al directorio del proyecto:
+    POST /api/balance/
 
-```
-cd asesorias
-```
+    {
+        "mes":["Enero", "Febrero", "Marzo", "Abril"],
+        "ventas":[30500, 35600, 28300, 33900],
+        "gastos":[22000, 23400, 18100, 20700]
+    }
 
-3. Crea un entorno virtual para el proyecto:
+### 3) Esquema de Base de Datos para Usuarios
+En este endpoint se ha creado un esquema de base de datos con los modelos, perfil, cargo y zona. tambien se hace uso del modelo de usuario(user) de django, y se ha implementado un servicio que permite añadir, consultar, modificar y eliminar la información de los perfiles, que tendra relacion con todos los modelos mencionados.
 
-```
-python -m venv env
-```
+Para obtener el listado de perfiles
 
-4. Activa el entorno virtual:
+    GET api/perfiles/
 
-- En Windows:
+Para crear un nuevo perfil
 
-```
-env\Scripts\activate
-```
+    POST /api/perfiles/
 
-- En macOS y Linux:
+    {
+        "username": "maestro",
+        "password": "unaClave12345678",
+        "password_confirmation": "unaClave12345678",
+        "cargo": 1,
+        "zonas": [1, 2]
+    }
 
-```
-source env/bin/activate
-```
+Para modificar los datos del perfil
 
-5. Instala las dependencias del proyecto:
+    PATCH /api/perfiles/1/
 
-```
-pip install -r requirements.txt
-```
+    {
+        "cargo": 1,
+        "zonas": [2]
+    }
 
-6. Realiza las migraciones de la base de datos:
+Para eliminar un perfil
 
-```
-python manage.py migrate
-```
+    DELETE /api/perfiles/1/
 
-## Cargar datos
-
-```
-python manage.py loaddata db.json
-```
-
-## Ejecución del Proyecto
-
-1. Inicia el servidor de desarrollo:
-
-```
-python manage.py runserver
-```
-
-2. Abre tu navegador web y accede a la siguiente URL:
-
-```
-http://localhost:8000
-```
-
-## Ejecucion de pruebas
-
-```
-python manage.py test
-```
+Para ejecutar el programa lee las [instrucciones](docs/docker.md)
