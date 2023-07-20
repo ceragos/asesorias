@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 
-from apps.ventas.aplicacion.domain.models.perfiles import Perfil
 from apps.ventas.aplicacion.ports.input_ports.perfiles import PerfilInputPort
+
 
 class UsuarioUseCase(PerfilInputPort):
 

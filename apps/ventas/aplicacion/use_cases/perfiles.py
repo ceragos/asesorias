@@ -2,6 +2,7 @@ from apps.ventas.aplicacion.ports.input_ports.perfiles import PerfilInputPort
 from apps.ventas.aplicacion.ports.output_ports.perfiles import PerfilOutputPort
 from apps.ventas.aplicacion.domain.models.perfiles import Perfil
 
+
 class PerfilUseCase(PerfilInputPort, PerfilOutputPort):
 
     def get_perfil(self, perfil_id):
@@ -20,7 +21,7 @@ class PerfilUseCase(PerfilInputPort, PerfilOutputPort):
 
     def update_perfil(self, instance, cargo, zonas):
         perfil = instance
-        perfil.cargo=cargo
+        perfil.cargo = cargo
         perfil.zonas.set(zonas)
         perfil.save()
         return perfil
