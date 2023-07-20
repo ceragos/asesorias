@@ -1,8 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-from apps.ventas.models.cargos import Cargo
-from apps.ventas.models.zonas import Zona
+from apps.ventas.aplicacion.domain.models.cargos import Cargo
+from apps.ventas.aplicacion.domain.models.zonas import Zona
 
 
 class Perfil(models.Model):

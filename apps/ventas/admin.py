@@ -1,8 +1,8 @@
 from django.contrib import admin
 
-from apps.ventas.models.cargos import Cargo
-from apps.ventas.models.zonas import Zona
-from apps.ventas.models.perfiles import Perfil
+from apps.ventas.aplicacion.domain.models.cargos import Cargo
+from apps.ventas.aplicacion.domain.models.zonas import Zona
+from apps.ventas.aplicacion.domain.models.perfiles import Perfil
 
 
 @admin.register(Cargo)

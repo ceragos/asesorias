@@ -3,7 +3,6 @@ from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
 
 from apps.ventas.enums.meses import MESES_CHOICES
-from apps.ventas.models.perfiles import Perfil, Cargo, Zona
 
 
 class ClasificarSerializer(serializers.Serializer):
@@ -39,63 +38,3 @@ class BalanceSerializer(serializers.Serializer):
             )
 
         return data
-
-
-class CargoSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Cargo
-        fields = ['nombre']
-
-
-class ZonaSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Zona
-        fields = ['ciudad', 'nombre']
-
-
-class UsuarioSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True)
-    password_confirmation = serializers.CharField(write_only=True)
-
-    class Meta:
-        model = User
-        fields = ('username', 'password', 'password_confirmation')
-
-    def validate(self, data):
-        password = data.get('password')
-        password_confirmation = data.get('password_confirmation')
-        if password != password_confirmation:
-            raise serializers.ValidationError(
-                {
-                    'password': 'Las contraseñas no coinciden.'
-                }
-            )
-
-        validate_password(password)
-        return data
-
-    def create(self, validated_data):
-        validated_data.pop('password_confirmation')
-        password = validated_data.pop('password')
-        user = User(**validated_data)
-        user.set_password(password)
-        user.save()
-        return user
-
-
-class PerfilSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Perfil
-        fields = '__all__'
-
-    def to_representation(self, instance):
-        representation = super().to_representation(instance)
-
-        representation['usuario'] = UsuarioSerializer(instance.usuario).data
-        representation['cargo'] = CargoSerializer(instance.cargo).data
-        representation['zonas'] = ZonaSerializer(instance.zonas.all(), many=True).data
-
-        return representation

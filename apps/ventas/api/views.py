@@ -9,12 +9,7 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework import status
 from django.db import transaction
 
-from apps.ventas.api.serializers import (
-    ClasificarSerializer, BalanceSerializer, UsuarioSerializer, PerfilSerializer
-)
-from apps.ventas.interfaces import PerfilInputPort
-from apps.ventas.models.perfiles import Perfil
-from apps.ventas.use_case import PerfilUseCase
+from apps.ventas.api.serializers import ClasificarSerializer, BalanceSerializer
 
 
 @api_view(['POST'])
@@ -62,45 +57,3 @@ class Balance(APIView):
             }
             resultado.append(item)
         return Response(resultado)
-
-
-class PerfilAdapter(PerfilInputPort):
-
-    def delete_perfil(self, perfil_id):
-        use_case = PerfilUseCase()
-        use_case.delete_perfil(perfil_id)
-
-
-class PerfilViewSet(ModelViewSet):
-    queryset = Perfil.objects.all()
-    serializer_class = PerfilSerializer
-    permission_classes = [IsAuthenticated]
-
-    def create(self, request, *args, **kwargs):
-        usuario_serializer = UsuarioSerializer(data=request.data)
-        usuario_serializer.is_valid(raise_exception=True)
-
-        with transaction.atomic():
-            try:
-                perfil_data = request.data.copy()
-                usuario = usuario_serializer.save()
-                perfil_data['usuario'] = usuario.id
-                perfil_serializer = self.get_serializer(data=perfil_data)
-                perfil_serializer.is_valid(raise_exception=True)
-                perfil_serializer.save()
-            except Exception as e:
-                transaction.set_rollback(True)
-                raise e
-        headers = self.get_success_headers(perfil_serializer.data)
-        return Response(
-            perfil_serializer.data, status=status.HTTP_201_CREATED, headers=headers
-        )
-
-    def destroy(self, request, *args, **kwargs):
-        instance = self.get_object()
-        perfil_id = instance.id
-
-        adapter = PerfilAdapter()
-        adapter.delete_perfil(perfil_id)
-
-        return Response(status=status.HTTP_204_NO_CONTENT)

@@ -4,10 +4,10 @@ from django.contrib.auth.models import User
 from rest_framework.test import APITestCase
 from rest_framework import status, HTTP_HEADER_ENCODING
 
-from apps.ventas.api.serializers import PerfilSerializer
-from apps.ventas.models.cargos import Cargo
-from apps.ventas.models.zonas import Zona
-from apps.ventas.models.perfiles import Perfil
+from apps.ventas.aplicacion.adapters.api.serializers.perfiles import PerfilSerializer
+from apps.ventas.aplicacion.domain.models.cargos import Cargo
+from apps.ventas.aplicacion.domain.models.zonas import Zona
+from apps.ventas.aplicacion.domain.models.perfiles import Perfil
 
 
 class VentasTestCase(APITestCase):
